@@ -28,7 +28,7 @@ const HomeContent = () => {
         <p className="text-lg text-gray-600 mb-4">
           Sign up now to experience seamless communication.
         </p>
-        <Link to="/signup"> {/* Use Link for navigation */}
+        <Link to="/signup">
           <button className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition duration-200">
             Sign Up
           </button>

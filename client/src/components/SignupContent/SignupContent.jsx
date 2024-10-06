@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // Import axios for making HTTP requests
+import axios from 'axios';
 
 const SignupContent = () => {
   const [formData, setFormData] = useState({

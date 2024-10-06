@@ -1,20 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
-import io from 'socket.io-client'; // Import socket.io for signaling
+import io from 'socket.io-client'; 
 
 const RoomContent = () => {
-  const [user, setUser] = useState(null); // State to store user info
-  const [roomCode, setRoomCode] = useState(''); // State to store room code
-  const [permissionsGranted, setPermissionsGranted] = useState(false); // State to check permissions
-  const [isRoomCreated, setIsRoomCreated] = useState(false); // State to check if room is created
-  const [joinRoomCode, setJoinRoomCode] = useState(''); // State for joining room code
-  const [chatMessages, setChatMessages] = useState([]); // State to store chat messages
-  const [newMessage, setNewMessage] = useState(''); // State to store new message input
-  const [remoteStream, setRemoteStream] = useState(null); // State to store the remote video stream
-  const videoRef = useRef(null); // Ref for user's video element
-  const remoteVideoRef = useRef(null); // Ref for remote video element
-  const peerRef = useRef(null); // Ref for peer connection
-  const socketRef = useRef(null); // Ref for socket connection
-  const localStreamRef = useRef(null); // Ref to store the local stream
+  const [user, setUser] = useState(null); 
+  const [roomCode, setRoomCode] = useState(''); 
+  const [permissionsGranted, setPermissionsGranted] = useState(false); 
+  const [isRoomCreated, setIsRoomCreated] = useState(false); 
+  const [joinRoomCode, setJoinRoomCode] = useState(''); 
+  const [chatMessages, setChatMessages] = useState([]); 
+  const [newMessage, setNewMessage] = useState(''); 
+  const [remoteStream, setRemoteStream] = useState(null); 
+  const videoRef = useRef(null); 
+  const remoteVideoRef = useRef(null); 
+  const peerRef = useRef(null); 
+  const socketRef = useRef(null); 
+  const localStreamRef = useRef(null); 
 
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem('user'));
@@ -22,41 +22,33 @@ const RoomContent = () => {
       setUser(loggedInUser);
     }
 
-    // Initialize socket connection to signaling server
-    socketRef.current = io('http://localhost:5000'); // Adjust based on your signaling server
+    socketRef.current = io('http://localhost:5000');
   }, []);
 
   useEffect(() => {
     if (isRoomCreated || joinRoomCode) {
       requestPermissions();
     }
-
-    // Clean up socket connection on component unmount
     return () => {
       if (socketRef.current) {
         socketRef.current.disconnect();
       }
     };
   }, [isRoomCreated, joinRoomCode]);
-
-  // Generate a random room code
   const generateRoomCode = () => {
     const code = Math.random().toString(36).substring(2, 8).toUpperCase();
     setRoomCode(code);
     setIsRoomCreated(true);
-
-    // Emit the event to the server signaling the room creation
     socketRef.current.emit('create-room', code);
   };
 
-  // Request media permissions and handle WebRTC setup
   const requestPermissions = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
       localStreamRef.current = stream;
 
       if (videoRef.current) {
-        videoRef.current.srcObject = stream; // Display local video
+        videoRef.current.srcObject = stream; 
       }
       setPermissionsGranted(true);
 
@@ -66,31 +58,28 @@ const RoomContent = () => {
     }
   };
 
-  // Setup WebRTC Peer Connection
   const setupWebRTC = () => {
     peerRef.current = new RTCPeerConnection();
 
-    // Add local stream tracks to peer connection
     localStreamRef.current.getTracks().forEach(track => {
       peerRef.current.addTrack(track, localStreamRef.current);
     });
 
-    // Handle receiving remote stream
     peerRef.current.ontrack = (event) => {
       setRemoteStream(event.streams[0]);
       if (remoteVideoRef.current) {
-        remoteVideoRef.current.srcObject = event.streams[0]; // Display remote video
+        remoteVideoRef.current.srcObject = event.streams[0];
       }
     };
 
-    // Create offer and send it to the server via socket
+
     peerRef.current.onicecandidate = (event) => {
       if (event.candidate) {
         socketRef.current.emit('ice-candidate', { candidate: event.candidate, roomCode });
       }
     };
 
-    // Create an offer for the connection
+    
     peerRef.current.createOffer()
       .then(offer => peerRef.current.setLocalDescription(offer))
       .then(() => {
@@ -99,7 +88,7 @@ const RoomContent = () => {
       .catch(err => console.error('Error creating offer:', err));
   };
 
-  // Handle joining an existing room
+  
   const handleJoinRoom = () => {
     if (joinRoomCode) {
       socketRef.current.emit('join-room', joinRoomCode);
@@ -113,7 +102,7 @@ const RoomContent = () => {
         peerRef.current.ontrack = (event) => {
           setRemoteStream(event.streams[0]);
           if (remoteVideoRef.current) {
-            remoteVideoRef.current.srcObject = event.streams[0]; // Display remote video
+            remoteVideoRef.current.srcObject = event.streams[0]; 
           }
         };
 
@@ -131,14 +120,13 @@ const RoomContent = () => {
     }
   };
 
-  // Handle sending messages in the chat
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (newMessage.trim()) {
       setChatMessages([...chatMessages, newMessage]);
       setNewMessage('');
 
-      // Emit the chat message to the signaling server
+  
       socketRef.current.emit('chat-message', { message: newMessage, roomCode });
     }
   };

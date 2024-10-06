@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 
 const LoginContent = () => {
   const [formData, setFormData] = useState({
@@ -9,7 +9,7 @@ const LoginContent = () => {
   });
 
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // Initialize the navigate function
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,7 +22,7 @@ const LoginContent = () => {
       const response = await axios.post('http://localhost:5000/api/users/login', formData);
       console.log('Login Response:', response.data);
       
-      // Store user info in localStorage
+      
       localStorage.setItem('user', JSON.stringify({ username: response.data.username }));
   
       alert(`Welcome, ${response.data.username}!`);
