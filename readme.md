@@ -57,7 +57,7 @@ Ensure you have the following installed:
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/yourusername/connectify.git
+   git clone https://github.com/realtneu/connectify.git
    cd connectify
    ```
 
@@ -77,7 +77,6 @@ Ensure you have the following installed:
    - Create a `.env` file in the `server` folder and add the following:
      ```
      MONGO_URI=<Your MongoDB connection string>
-     JWT_SECRET=<Your JWT secret>
      PORT=5000
      ```
 
@@ -95,7 +94,7 @@ Ensure you have the following installed:
    npm start
    ```
 
-3. Open [http://localhost:3000](http://localhost:3000) to view the application in the browser.
+3. Open [http://localhost:5000](http://localhost:5000) to view the application in the browser.
 
 ---
 
@@ -148,10 +147,5 @@ Contributions are welcome! If you'd like to contribute to this project, please f
 2. Create a new feature branch.
 3. Commit your changes.
 4. Push the branch and create a Pull Request.
-
----
-
-## **License**
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
